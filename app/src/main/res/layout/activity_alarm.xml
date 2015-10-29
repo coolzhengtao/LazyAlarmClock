@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.rabraffe.lazyalarmclock.activities.AlarmActivity">
+
+    <Button
+        android:id="@+id/btnStopVibrate"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_button_stop"
+        android:gravity="center"
+        android:text="醒了..."
+        android:textColor="@android:color/white"
+        android:textSize="30sp" />
+</RelativeLayout>

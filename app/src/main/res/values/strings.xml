@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">懒人闹钟</string>
+    <string name="main_tv_add">添加闹钟</string>
+    <string name="main_tv_alarm">闹钟</string>
 </resources>
