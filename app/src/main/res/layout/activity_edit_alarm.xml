@@ -126,6 +126,7 @@
                     android:text="震动提示" />
 
                 <Switch
+                    android:id="@+id/switch_vibrate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

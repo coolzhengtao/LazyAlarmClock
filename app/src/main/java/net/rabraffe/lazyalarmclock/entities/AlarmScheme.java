@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import net.rabraffe.lazyalarmclock.Application.AlarmApplication;
 import net.rabraffe.lazyalarmclock.activities.AlarmActivity;
+import net.rabraffe.lazyalarmclock.utils.FileUtil;
+import net.rabraffe.lazyalarmclock.utils.StaticValues;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,9 +23,22 @@ public class AlarmScheme {
         return ourInstance;
     }
 
-    private ArrayList<AlarmClock> listAlarm = new ArrayList<>();          //闹钟列表
+    public ArrayList<AlarmClock> listAlarm = new ArrayList<>();          //闹钟列表
 
     private AlarmScheme() {
+        //尝试从硬盘中获取数据
+        Object objList = FileUtil.getObjectFromFile(StaticValues.FILE_PATH, "alarm.dat");
+        if (objList != null) {
+            this.listAlarm = (ArrayList<AlarmClock>) objList;
+            setNextAlarm();
+        }
+    }
+
+    /**
+     * 保存闹钟到磁盘
+     */
+    public void SaveAlarms() {
+        FileUtil.saveObjectToFile(StaticValues.FILE_PATH, "alarm.dat", this.listAlarm);
     }
 
     /**

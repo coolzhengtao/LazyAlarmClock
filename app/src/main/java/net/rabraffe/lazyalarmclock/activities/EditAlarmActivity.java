@@ -2,6 +2,7 @@ package net.rabraffe.lazyalarmclock.activities;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -26,6 +27,8 @@ public class EditAlarmActivity extends BaseActivity {
     TimePicker timePicker;
     @Bind(R.id.tv_name)
     TextView tv_name;
+    @Bind(R.id.switch_vibrate)
+    Switch switch_vibrate;
 
     AlarmClock alarm;
 
@@ -35,6 +38,7 @@ public class EditAlarmActivity extends BaseActivity {
         setContentView(R.layout.activity_edit_alarm);
         ButterKnife.bind(this);
         timePicker.setIs24HourView(true);
+        switch_vibrate.setChecked(true);
     }
 
     @OnClick(R.id.btn_save)
@@ -58,7 +62,7 @@ public class EditAlarmActivity extends BaseActivity {
         alarm.setIsEnabled(true);
         alarm.setAlarmTime(dtAlarm);
         alarm.setType(AlarmClock.TYPE_ONCE);
-        alarm.setIsVibrateOn(true);
+        alarm.setIsVibrateOn(switch_vibrate.isChecked());
         alarm.setName(tv_name.getText().toString());
         AlarmScheme.getInstance().addAlarm(alarm);
         AlarmScheme.getInstance().setNextAlarm();

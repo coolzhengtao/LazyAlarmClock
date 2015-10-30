@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.rabraffe.lazyalarmclock">
-    !-- 震动权限 -->
+    <!-- 震动权限 -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 获取启动通知 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -30,6 +30,17 @@
         </activity>
         <activity android:name=".activities.EditAlarmActivity"></activity>
         <activity android:name=".activities.AlarmActivity"></activity>
+
+        <receiver
+            android:name=".broadcasts.SystemStartReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
