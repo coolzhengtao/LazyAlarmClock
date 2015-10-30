@@ -3,5 +3,12 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
-
+    <style name="check_repeat">
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/selector_check_repeat</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+    </style>
 </resources>

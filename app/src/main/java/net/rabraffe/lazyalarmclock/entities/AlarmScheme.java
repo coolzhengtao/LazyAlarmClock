@@ -1,122 +1,88 @@
 package net.rabraffe.lazyalarmclock.entities;
 
-import java.io.Serializable;
-import java.util.Calendar;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
+import net.rabraffe.lazyalarmclock.Application.AlarmApplication;
+import net.rabraffe.lazyalarmclock.activities.AlarmActivity;
+
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 /**
- * 闹钟计划实体类
- * Created by coolz on 2015/10/15 0015.
+ * 闹钟管理类
+ * Created by Neo on 2015/10/29 0029.
  */
-public class AlarmScheme implements Serializable {
-    public static final int TYPE_ONCE = 0x1;        //单次
-    public static final int TYPE_EVERYDAY = 0x2;    //每日
-    public static final int TYPE_WORKDAY = 0x3;     //工作日
-    public static final int TYPE_CUSTOM = 0x4;      //自定义
+public class AlarmScheme {
+    private static AlarmScheme ourInstance = new AlarmScheme();
 
-
-    private String uuid;                  //UUID
-    private String name = "闹钟";                //闹钟名称
-    private int type = TYPE_ONCE;                   //闹钟类型
-    private boolean isVibrateOn;        //是否震动
-    private boolean[] weekAlarm = new boolean[7];           //每周几重响
-    private boolean isEnabled;          //是否启用
-    private Date alarmTime;             //响铃的时间，注意不包含日期
-
-    public AlarmScheme() {
-        uuid = UUID.randomUUID().toString();
+    public static AlarmScheme getInstance() {
+        return ourInstance;
     }
 
-    public Date getAlarmTime() {
-        //重写获取alarmTime根据下次要响铃的时间获取
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(alarmTime);
-        Date dtNow = new Date();            //现在的时间
-        switch (type) {
-            case TYPE_ONCE:
-                break;
-            case TYPE_EVERYDAY:
-                //每天响铃
-                if (dtNow.getTime() >= alarmTime.getTime()) {
-                    calendar.add(Calendar.DATE, 1); //加一天
-                }
-                break;
-            case TYPE_WORKDAY:
-                //工作日响铃
-                Calendar calendar1Now = Calendar.getInstance();
-                calendar1Now.setTime(dtNow);
-                switch (calendar1Now.get(Calendar.DAY_OF_WEEK)) {
-                    case Calendar.MONDAY:
-                    case Calendar.TUESDAY:
-                    case Calendar.WEDNESDAY:
-                    case Calendar.THURSDAY:
-                        if (dtNow.getTime() >= alarmTime.getTime()) {
-                            calendar.add(Calendar.DATE, 1); //加一天
-                        }
-                        break;
-                    case Calendar.FRIDAY:
-                        if (dtNow.getTime() >= alarmTime.getTime()) {
-                            calendar.add(Calendar.DATE, 3); //加三天
-                        }
-                        break;
-                    case Calendar.SATURDAY:
-                        calendar.add(Calendar.DATE, 2); //加两天
-                        break;
-                    case Calendar.SUNDAY:
-                        calendar.add(Calendar.DATE, 1); //加一天
-                        break;
-                }
-                break;
+    private ArrayList<AlarmClock> listAlarm = new ArrayList<>();          //闹钟列表
+
+    private AlarmScheme() {
+    }
+
+    /**
+     * 新增一个闹钟
+     *
+     * @param scheme
+     */
+    public void addAlarm(AlarmClock scheme) {
+        listAlarm.add(scheme);
+    }
+
+    /**
+     * 取消一个闹钟
+     *
+     * @param strUUID
+     */
+    public void disableAlarm(String strUUID) {
+        for (AlarmClock scheme :
+                listAlarm) {
+            if (scheme.getUUID().equals(strUUID)) {
+                scheme.setIsEnabled(false);
+            }
         }
-        return calendar.getTime();
     }
 
-    public String getUUID() {
-        return uuid;
+    /**
+     * 获取下一个闹钟
+     *
+     * @return
+     */
+    private AlarmClock getNextAlarm() {
+        AlarmClock schemeResult = null;
+        for (AlarmClock scheme :
+                listAlarm) {
+            //保证下个闹钟的时间比现在的时间晚
+            if (scheme.isEnabled() && scheme.getAlarmTime().getTime() > new Date().getTime()) {
+                if (schemeResult == null) {
+                    schemeResult = scheme;
+                    continue;
+                }
+                if (scheme.getAlarmTime().getTime() < schemeResult.getAlarmTime().getTime()) {
+                    schemeResult = scheme;
+                }
+            }
+        }
+        return schemeResult;
     }
 
-    public void setAlarmTime(Date alarmTime) {
-        this.alarmTime = alarmTime;
+    /**
+     * 设置下一个闹钟
+     */
+    public void setNextAlarm() {
+        AlarmClock scheme = getNextAlarm();
+        if (scheme == null) return;
+        Intent intent = new Intent(AlarmApplication.appContext, AlarmActivity.class);
+        intent.putExtra("uuid", scheme.getUUID());
+        PendingIntent pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, Intent.FILL_IN_ACTION);
+        android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
+        am.set(android.app.AlarmManager.RTC_WAKEUP, scheme.getAlarmTime().getTime(), pendingIntent);
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setIsEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
-    }
-
-    public boolean isVibrateOn() {
-        return isVibrateOn;
-    }
-
-    public void setIsVibrateOn(boolean isVibrateOn) {
-        this.isVibrateOn = isVibrateOn;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public boolean[] getWeekAlarm() {
-        return weekAlarm;
-    }
-
-    public void setWeekAlarm(boolean[] weekAlarm) {
-        this.weekAlarm = weekAlarm;
-    }
 }

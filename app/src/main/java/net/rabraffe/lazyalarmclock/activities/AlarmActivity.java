@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import net.rabraffe.lazyalarmclock.R;
+import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
 
 import java.io.IOException;
 import java.util.Date;
@@ -65,7 +66,7 @@ public class AlarmActivity extends AppCompatActivity {
             sensorManager.unregisterListener(listener);
             wakeLock.release();
             //设置下一个闹钟
-//            Alarms.getInstance().setNextAlarm(this);
+            AlarmScheme.getInstance().setNextAlarm();
             isClear = true;
             this.finish();
         }
