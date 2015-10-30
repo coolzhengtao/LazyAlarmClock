@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- 解锁权限 -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <!-- 悬浮窗口权限 -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-feature android:name="android.os.Vibrator" />
 

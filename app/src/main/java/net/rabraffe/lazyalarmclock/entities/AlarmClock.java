@@ -69,7 +69,8 @@ public class AlarmClock implements Serializable {
                 }
                 break;
         }
-        return calendar.getTime();
+        alarmTime = calendar.getTime();
+        return alarmTime;
     }
 
     public String getUUID() {

@@ -25,6 +25,8 @@ public class AlarmScheme {
 
     public ArrayList<AlarmClock> listAlarm = new ArrayList<>();          //闹钟列表
 
+    PendingIntent pendingIntent;                                        //启动闹钟的Intent
+
     private AlarmScheme() {
         //尝试从硬盘中获取数据
         Object objList = FileUtil.getObjectFromFile(StaticValues.FILE_PATH, "alarm.dat");
@@ -95,9 +97,16 @@ public class AlarmScheme {
         if (scheme == null) return;
         Intent intent = new Intent(AlarmApplication.appContext, AlarmActivity.class);
         intent.putExtra("uuid", scheme.getUUID());
-        PendingIntent pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, Intent.FILL_IN_ACTION);
+        pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, Intent.FILL_IN_ACTION);
         android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
         am.set(android.app.AlarmManager.RTC_WAKEUP, scheme.getAlarmTime().getTime(), pendingIntent);
+    }
+
+    public void deleteAlarm(int position){
+        listAlarm.remove(position);
+        android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(pendingIntent);
+        setNextAlarm();
     }
 
 }

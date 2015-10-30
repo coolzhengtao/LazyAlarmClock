@@ -3,9 +3,10 @@ package net.rabraffe.lazyalarmclock.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AnalogClock;
 import android.widget.ListView;
 
@@ -40,22 +41,39 @@ public class MainActivity extends BaseActivity {
         initView();
     }
 
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        if (item.getItemId() == 1) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+                    .getMenuInfo();
+            AlarmScheme.getInstance().deleteAlarm(info.position);
+            adapter.notifyDataSetChanged();
+        }
+        return super.onMenuItemSelected(featureId, item);
+    }
+
     private void initView() {
         ButterKnife.bind(this);
         context = this;
         EventBus.getInstance().register(this);
         adapter = new AlarmAdapter(context, AlarmScheme.getInstance().listAlarm);
         lv_alarms.setAdapter(adapter);
+        lv_alarms.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                menu.add(0, 1, 0, "删除");
+            }
+        });
     }
 
     @OnClick(R.id.btn_add)
-    public void btn_addOnClick(View view){
-        Intent intent = new Intent(context,EditAlarmActivity.class);
+    public void btn_addOnClick(View view) {
+        Intent intent = new Intent(context, EditAlarmActivity.class);
         startActivity(intent);
     }
 
     @Subscribe
-    public void onAddAlarm(AlarmAddEvent event){
+    public void onAddAlarm(AlarmAddEvent event) {
         //新增闹钟或修改闹钟时刷新界面事件
         adapter.notifyDataSetChanged();
     }

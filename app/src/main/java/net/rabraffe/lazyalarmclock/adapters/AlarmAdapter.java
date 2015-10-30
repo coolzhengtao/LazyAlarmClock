@@ -58,37 +58,37 @@ public class AlarmAdapter extends BaseAdapter {
         vHolder.tv_time.setText(simpleDateFormat.format(alarmClock.getAlarmTime()));
         vHolder.switch_enable.setChecked(alarmClock.isEnabled());
         StringBuilder strInfo = new StringBuilder(alarmClock.getName());
-        if(alarmClock.getType() == AlarmClock.TYPE_ONCE){
+        if (alarmClock.getType() == AlarmClock.TYPE_ONCE) {
             strInfo.append(" 单次");
-        }
-        else  if (alarmClock.getType() == AlarmClock.TYPE_EVERYDAY){
+        } else if (alarmClock.getType() == AlarmClock.TYPE_EVERYDAY) {
             strInfo.append(" 每天");
-        }
-        else if(alarmClock.getType() == AlarmClock.TYPE_CUSTOM){
+        } else if (alarmClock.getType() == AlarmClock.TYPE_WORKDAY) {
+            strInfo.append(" 工作日");
+        } else if (alarmClock.getType() == AlarmClock.TYPE_CUSTOM) {
             strInfo.append(" 周");
-            if(alarmClock.getWeekAlarm()[0]){
+            if (alarmClock.getWeekAlarm()[0]) {
                 strInfo.append("日");
             }
-            if(alarmClock.getWeekAlarm()[1]){
+            if (alarmClock.getWeekAlarm()[1]) {
                 strInfo.append("一");
             }
-            if(alarmClock.getWeekAlarm()[2]){
+            if (alarmClock.getWeekAlarm()[2]) {
                 strInfo.append("二");
             }
-            if(alarmClock.getWeekAlarm()[3]){
+            if (alarmClock.getWeekAlarm()[3]) {
                 strInfo.append("三");
             }
-            if(alarmClock.getWeekAlarm()[4]){
+            if (alarmClock.getWeekAlarm()[4]) {
                 strInfo.append("四");
             }
-            if(alarmClock.getWeekAlarm()[5]){
+            if (alarmClock.getWeekAlarm()[5]) {
                 strInfo.append("五");
             }
-            if(alarmClock.getWeekAlarm()[6]){
+            if (alarmClock.getWeekAlarm()[6]) {
                 strInfo.append("六");
             }
         }
-        strInfo.append(alarmClock.isEnabled()?" 启用":" 未启用");
+        strInfo.append(alarmClock.isEnabled() ? " 启用" : " 未启用");
         vHolder.tv_info.setText(strInfo.toString());
         return convertView;
     }

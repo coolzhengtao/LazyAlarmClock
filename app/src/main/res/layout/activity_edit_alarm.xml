@@ -48,36 +48,44 @@
                 android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="重复"
                     android:textSize="18sp" />
 
                 <CheckBox
+                    android:id="@+id/check_sun"
                     style="@style/check_repeat"
                     android:text="日" />
 
                 <CheckBox
+                    android:id="@+id/check_mon"
                     style="@style/check_repeat"
                     android:text="一" />
 
                 <CheckBox
+                    android:id="@+id/check_tue"
                     style="@style/check_repeat"
                     android:text="二" />
 
                 <CheckBox
+                    android:id="@+id/check_wed"
                     style="@style/check_repeat"
                     android:text="三" />
 
                 <CheckBox
+                    android:id="@+id/check_thu"
                     style="@style/check_repeat"
                     android:text="四" />
 
                 <CheckBox
+                    android:id="@+id/check_fri"
                     style="@style/check_repeat"
                     android:text="五" />
 
                 <CheckBox
+                    android:id="@+id/check_sat"
                     style="@style/check_repeat"
                     android:text="六" />
             </LinearLayout>
