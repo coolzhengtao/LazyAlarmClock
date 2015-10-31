@@ -19,6 +19,8 @@ import android.widget.Button;
 
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
+import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
+import net.rabraffe.lazyalarmclock.utils.EventBus;
 
 import java.io.IOException;
 import java.util.Date;
@@ -68,6 +70,7 @@ public class AlarmActivity extends AppCompatActivity {
             //设置下一个闹钟
             AlarmScheme.getInstance().setNextAlarm();
             isClear = true;
+            EventBus.getInstance().post(new CloseAllActivityEvent());
             this.finish();
         }
     }
@@ -95,7 +98,7 @@ public class AlarmActivity extends AppCompatActivity {
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);         //获取重力感应器
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);         //获取加速度感应器
         listener = new SensorValueListener();
         uriAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);   //获取默认的铃声URI
         mediaPlayer = new MediaPlayer();

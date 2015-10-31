@@ -7,10 +7,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.squareup.otto.Subscribe;
+
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.entities.AlarmClock;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
 import net.rabraffe.lazyalarmclock.events.AlarmAddEvent;
+import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
 import net.rabraffe.lazyalarmclock.utils.EventBus;
 
 import java.util.Calendar;
@@ -56,6 +59,7 @@ public class EditAlarmActivity extends BaseActivity {
 
     private void initView() {
         ButterKnife.bind(this);
+        EventBus.getInstance().register(this);
         timePicker.setIs24HourView(true);
         switch_vibrate.setChecked(true);
     }
@@ -111,6 +115,12 @@ public class EditAlarmActivity extends BaseActivity {
         AlarmScheme.getInstance().addAlarm(alarm);
         AlarmScheme.getInstance().setNextAlarm();
         EventBus.getInstance().post(new AlarmAddEvent());
+        this.finish();
+    }
+
+    @Subscribe
+    public void onCloseAllActivity(CloseAllActivityEvent event){
+        //关闭所有窗体
         this.finish();
     }
 }

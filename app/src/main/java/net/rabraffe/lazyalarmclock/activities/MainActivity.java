@@ -16,6 +16,7 @@ import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.adapters.AlarmAdapter;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
 import net.rabraffe.lazyalarmclock.events.AlarmAddEvent;
+import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
 import net.rabraffe.lazyalarmclock.utils.EventBus;
 
 import butterknife.Bind;
@@ -76,5 +77,11 @@ public class MainActivity extends BaseActivity {
     public void onAddAlarm(AlarmAddEvent event) {
         //新增闹钟或修改闹钟时刷新界面事件
         adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onCloseAllActivity(CloseAllActivityEvent event){
+        //关闭所有窗体
+        this.finish();
     }
 }
