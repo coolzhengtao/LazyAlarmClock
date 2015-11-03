@@ -1,6 +1,10 @@
 package net.rabraffe.lazyalarmclock.activities;
 
+import android.annotation.TargetApi;
 import android.app.KeyguardManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.graphics.drawable.Icon;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,6 +13,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +49,7 @@ public class AlarmActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;                    //媒体播放器
     private AudioManager audioManager;                  //音频管理服务
     private WindowManager windowManager;                //Window服务
+    private NotificationManager notificationManager;    //提醒服务
     private boolean isClear;                            //是否释放.
 
     private Date dtStart;                               //闹钟开始的时间
@@ -101,6 +107,7 @@ public class AlarmActivity extends AppCompatActivity {
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);         //获取加速度感应器
         listener = new SensorValueListener();
         uriAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);   //获取默认的铃声URI
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(this, uriAlarm);
@@ -115,6 +122,7 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     //打开闹钟
+    @TargetApi(Build.VERSION_CODES.M)
     private void alarmClockOn() {
         //关闭当前闹钟
 //        Alarms.getInstance().disableAlarm(getIntent().getStringExtra("uuid"));
@@ -131,7 +139,10 @@ public class AlarmActivity extends AppCompatActivity {
         keyguardManager.newKeyguardLock("").disableKeyguard();
         wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "lock");
         wakeLock.acquire();
-        //按钮震动
+        //提示Notifacation
+        Notification notification = new Notification.Builder(this).setContentTitle("懒人闹钟")
+                .setContentText("闹钟响了").setTicker("闹钟响了").getNotification();
+        notificationManager.notify(1,notification);
     }
 
     //传感器监听类
