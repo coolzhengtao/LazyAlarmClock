@@ -3,6 +3,7 @@ package net.rabraffe.lazyalarmclock.entities;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import net.rabraffe.lazyalarmclock.Application.AlarmApplication;
 import net.rabraffe.lazyalarmclock.activities.AlarmActivity;
@@ -99,10 +100,15 @@ public class AlarmScheme {
         intent.putExtra("uuid", scheme.getUUID());
         pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, Intent.FILL_IN_ACTION);
         android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
-        am.set(android.app.AlarmManager.RTC_WAKEUP, scheme.getAlarmTime().getTime(), pendingIntent);
+        //判断系统版本
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            am.setExact(android.app.AlarmManager.RTC_WAKEUP, scheme.getAlarmTime().getTime(), pendingIntent);
+        } else {
+            am.set(android.app.AlarmManager.RTC_WAKEUP, scheme.getAlarmTime().getTime(), pendingIntent);
+        }
     }
 
-    public void deleteAlarm(int position){
+    public void deleteAlarm(int position) {
         listAlarm.remove(position);
         android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
         am.cancel(pendingIntent);

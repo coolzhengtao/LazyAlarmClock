@@ -20,7 +20,7 @@ public class BaseActivity extends Activity {
         //初始化界面
         requestWindowFeature(Window.FEATURE_NO_TITLE);                          //无标题
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);    //纵向屏幕
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     @Override

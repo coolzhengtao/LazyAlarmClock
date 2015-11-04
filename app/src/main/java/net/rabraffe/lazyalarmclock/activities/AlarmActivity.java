@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -122,7 +123,6 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     //打开闹钟
-    @TargetApi(Build.VERSION_CODES.M)
     private void alarmClockOn() {
         //关闭当前闹钟
 //        Alarms.getInstance().disableAlarm(getIntent().getStringExtra("uuid"));
@@ -140,8 +140,9 @@ public class AlarmActivity extends AppCompatActivity {
         wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "lock");
         wakeLock.acquire();
         //提示Notifacation
-        Notification notification = new Notification.Builder(this).setContentTitle("懒人闹钟")
-                .setContentText("闹钟响了").setTicker("闹钟响了").getNotification();
+        Notification notification = new NotificationCompat.Builder(this).setTicker("闹钟响了")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText("闹钟响了").setContentTitle("懒人闹钟").build();
         notificationManager.notify(1,notification);
     }
 
