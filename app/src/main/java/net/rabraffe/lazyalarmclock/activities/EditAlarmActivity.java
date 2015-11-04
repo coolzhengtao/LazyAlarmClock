@@ -6,6 +6,7 @@ import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -16,6 +17,7 @@ import net.rabraffe.lazyalarmclock.events.AlarmAddEvent;
 import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
 import net.rabraffe.lazyalarmclock.utils.EventBus;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -80,6 +82,11 @@ public class EditAlarmActivity extends BaseActivity {
                 check_wed.isChecked() && check_thu.isChecked() &&
                 check_fri.isChecked() && check_sat.isChecked() && check_sun.isChecked()) {
             alarm.setType(AlarmClock.TYPE_EVERYDAY);
+        } else if (check_mon.isChecked() && check_tue.isChecked() && check_wed.isChecked() && check_thu.isChecked() && check_fri.isChecked()) {
+            alarm.setType(AlarmClock.TYPE_WORKDAY);
+        } else if (!check_mon.isChecked() && !check_tue.isChecked() &&
+                !check_wed.isChecked() && !check_thu.isChecked() &&
+                !check_fri.isChecked() && !check_sat.isChecked() && !check_sun.isChecked()) {
             if (dtAlarm.before(new Date())) {
                 //设置为新的一天
                 Calendar calendar = Calendar.getInstance();
@@ -87,13 +94,6 @@ public class EditAlarmActivity extends BaseActivity {
                 calendar.add(Calendar.DATE, 1);
                 dtAlarm = calendar.getTime();
             }
-        } else if (check_mon.isChecked() && check_tue.isChecked() && check_wed.isChecked() && check_thu.isChecked() && check_fri.isChecked()) {
-            alarm.setType(AlarmClock.TYPE_WORKDAY);
-            alarm.setAlarmTime(dtAlarm);
-            alarm.getAlarmTime();
-        } else if (!check_mon.isChecked() && !check_tue.isChecked() &&
-                !check_wed.isChecked() && !check_thu.isChecked() &&
-                !check_fri.isChecked() && !check_sat.isChecked() && !check_sun.isChecked()) {
             alarm.setType(AlarmClock.TYPE_ONCE);
         } else {
             alarm.setType(AlarmClock.TYPE_CUSTOM);
@@ -110,11 +110,14 @@ public class EditAlarmActivity extends BaseActivity {
         }
         alarm.setIsEnabled(true);
         alarm.setAlarmTime(dtAlarm);
+        alarm.getAlarmTime();               //刷新计划时间
         alarm.setIsVibrateOn(switch_vibrate.isChecked());
         alarm.setName(tv_name.getText().toString());
         AlarmScheme.getInstance().addAlarm(alarm);
         AlarmScheme.getInstance().setNextAlarm();
         EventBus.getInstance().post(new AlarmAddEvent());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Toast.makeText(this, String.format("闹钟响铃时间：" + format.format(alarm.getAlarmTime())), Toast.LENGTH_LONG).show();
         this.finish();
     }
 

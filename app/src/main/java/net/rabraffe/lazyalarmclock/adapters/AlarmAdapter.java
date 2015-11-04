@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -53,7 +54,7 @@ public class AlarmAdapter extends BaseAdapter {
         } else {
             vHolder = (ViewHolder) convertView.getTag();
         }
-        AlarmClock alarmClock = listClocks.get(position);
+        final AlarmClock alarmClock = listClocks.get(position);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         vHolder.tv_time.setText(simpleDateFormat.format(alarmClock.getAlarmTime()));
         vHolder.switch_enable.setChecked(alarmClock.isEnabled());
@@ -90,6 +91,12 @@ public class AlarmAdapter extends BaseAdapter {
         }
         strInfo.append(alarmClock.isEnabled() ? " 启用" : " 未启用");
         vHolder.tv_info.setText(strInfo.toString());
+        vHolder.switch_enable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                alarmClock.setIsEnabled(isChecked);
+            }
+        });
         return convertView;
     }
 

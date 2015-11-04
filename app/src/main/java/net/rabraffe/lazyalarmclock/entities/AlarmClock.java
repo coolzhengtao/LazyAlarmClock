@@ -44,28 +44,26 @@ public class AlarmClock implements Serializable {
                 break;
             case TYPE_WORKDAY:
                 //工作日响铃
-                Calendar calendar1Now = Calendar.getInstance();
-                calendar1Now.setTime(dtNow);
-                switch (calendar1Now.get(Calendar.DAY_OF_WEEK)) {
-                    case Calendar.MONDAY:
-                    case Calendar.TUESDAY:
-                    case Calendar.WEDNESDAY:
-                    case Calendar.THURSDAY:
-                        if (dtNow.getTime() >= alarmTime.getTime()) {
+                if (dtNow.getTime() >= alarmTime.getTime()) {
+                    Calendar calendar1Now = Calendar.getInstance();
+                    calendar1Now.setTime(dtNow);
+                    switch (calendar1Now.get(Calendar.DAY_OF_WEEK)) {
+                        case Calendar.MONDAY:
+                        case Calendar.TUESDAY:
+                        case Calendar.WEDNESDAY:
+                        case Calendar.THURSDAY:
                             calendar.add(Calendar.DATE, 1); //加一天
-                        }
-                        break;
-                    case Calendar.FRIDAY:
-                        if (dtNow.getTime() >= alarmTime.getTime()) {
+                            break;
+                        case Calendar.FRIDAY:
                             calendar.add(Calendar.DATE, 3); //加三天
-                        }
-                        break;
-                    case Calendar.SATURDAY:
-                        calendar.add(Calendar.DATE, 2); //加两天
-                        break;
-                    case Calendar.SUNDAY:
-                        calendar.add(Calendar.DATE, 1); //加一天
-                        break;
+                            break;
+                        case Calendar.SATURDAY:
+                            calendar.add(Calendar.DATE, 2); //加两天
+                            break;
+                        case Calendar.SUNDAY:
+                            calendar.add(Calendar.DATE, 1); //加一天
+                            break;
+                    }
                 }
                 break;
         }
