@@ -66,6 +66,30 @@ public class AlarmClock implements Serializable {
                     }
                 }
                 break;
+            case TYPE_CUSTOM:
+                //自定义响铃
+                if (dtNow.getTime() >= alarmTime.getTime()) {
+                    Calendar calendar1Now = Calendar.getInstance();
+                    calendar1Now.setTime(dtNow);
+                    int dayOfWeek = calendar1Now.get(Calendar.DAY_OF_WEEK) - 1;     //确定今天星期几
+                    boolean isAddDay = false;
+                    for (int i = dayOfWeek + 1; i < 7; i++) {
+                        if (weekAlarm[i]) {
+                            calendar.add(Calendar.DATE, i - dayOfWeek);
+                            isAddDay = true;            //已经加过
+                            break;
+                        }
+                    }
+                    if (!isAddDay) {
+                        for (int i = 0; i <= dayOfWeek; i++) {
+                            if (weekAlarm[i]) {
+                                calendar.add(Calendar.DATE, i + 7 - dayOfWeek);
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
         }
         alarmTime = calendar.getTime();
         return alarmTime;

@@ -1,10 +1,8 @@
 package net.rabraffe.lazyalarmclock.activities;
 
-import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.graphics.drawable.Icon;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,7 +11,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
@@ -25,6 +22,7 @@ import android.widget.Button;
 
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
+import net.rabraffe.lazyalarmclock.events.AlarmUpdateEvent;
 import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
 import net.rabraffe.lazyalarmclock.utils.EventBus;
 
@@ -74,6 +72,13 @@ public class AlarmActivity extends AppCompatActivity {
             //关闭传感器
             sensorManager.unregisterListener(listener);
             wakeLock.release();
+            //判断是否是单次闹钟
+            if (getIntent().getBooleanExtra("once", false)) {
+                //禁用单次闹钟
+                AlarmScheme.getInstance().disableAlarm(getIntent().getStringExtra("uuid"));
+                //刷新界面
+                EventBus.getInstance().post(new AlarmUpdateEvent());
+            }
             //设置下一个闹钟
             AlarmScheme.getInstance().setNextAlarm();
             isClear = true;

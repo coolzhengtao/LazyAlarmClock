@@ -15,7 +15,7 @@ import com.squareup.otto.Subscribe;
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.adapters.AlarmAdapter;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
-import net.rabraffe.lazyalarmclock.events.AlarmAddEvent;
+import net.rabraffe.lazyalarmclock.events.AlarmUpdateEvent;
 import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
 import net.rabraffe.lazyalarmclock.utils.EventBus;
 
@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onAddAlarm(AlarmAddEvent event) {
+    public void onAddAlarm(AlarmUpdateEvent event) {
         //新增闹钟或修改闹钟时刷新界面事件
         adapter.notifyDataSetChanged();
     }

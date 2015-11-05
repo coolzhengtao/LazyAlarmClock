@@ -13,7 +13,7 @@ import com.squareup.otto.Subscribe;
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.entities.AlarmClock;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
-import net.rabraffe.lazyalarmclock.events.AlarmAddEvent;
+import net.rabraffe.lazyalarmclock.events.AlarmUpdateEvent;
 import net.rabraffe.lazyalarmclock.events.CloseAllActivityEvent;
 import net.rabraffe.lazyalarmclock.utils.EventBus;
 
@@ -115,7 +115,7 @@ public class EditAlarmActivity extends BaseActivity {
         alarm.setName(tv_name.getText().toString());
         AlarmScheme.getInstance().addAlarm(alarm);
         AlarmScheme.getInstance().setNextAlarm();
-        EventBus.getInstance().post(new AlarmAddEvent());
+        EventBus.getInstance().post(new AlarmUpdateEvent());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Toast.makeText(this, String.format("闹钟响铃时间：" + format.format(alarm.getAlarmTime())), Toast.LENGTH_LONG).show();
         this.finish();

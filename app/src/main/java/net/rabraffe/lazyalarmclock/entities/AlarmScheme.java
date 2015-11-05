@@ -98,6 +98,7 @@ public class AlarmScheme {
         if (scheme == null) return;
         Intent intent = new Intent(AlarmApplication.appContext, AlarmActivity.class);
         intent.putExtra("uuid", scheme.getUUID());
+        intent.putExtra("once", scheme.getType() == AlarmClock.TYPE_ONCE);
         pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, Intent.FILL_IN_ACTION);
         android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
         //判断系统版本
