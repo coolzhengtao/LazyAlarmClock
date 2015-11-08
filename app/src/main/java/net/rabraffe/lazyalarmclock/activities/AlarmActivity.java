@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
@@ -54,8 +55,11 @@ public class AlarmActivity extends AppCompatActivity {
     private Date dtStart;                               //闹钟开始的时间
     private Date dtEnd;                                 //闹钟结束的时间
 
+    private TimeOutTask timeOutTask = new TimeOutTask();        //超时任务
+
     @OnClick(R.id.btnStopVibrate)
     public void btnStopVibrateClick(View view) {
+        timeOutTask.cancel(true);
         alarmClockOff();
     }
 
@@ -100,6 +104,7 @@ public class AlarmActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //关闭传感器
+        timeOutTask.cancel(true);
         alarmClockOff();
     }
 
@@ -129,6 +134,8 @@ public class AlarmActivity extends AppCompatActivity {
 
     //打开闹钟
     private void alarmClockOn() {
+        //启用超时
+        timeOutTask.execute(60000);         //超时60秒自动关闭
         //关闭当前闹钟
 //        Alarms.getInstance().disableAlarm(getIntent().getStringExtra("uuid"));
         //开始计时
@@ -164,8 +171,10 @@ public class AlarmActivity extends AppCompatActivity {
                 isUp = true;
             }
             if (isUp && mLast < -6.0f) {
+                timeOutTask.cancel(true);
                 alarmClockOff();
             } else if (!isUp && mLast > 6.0f) {
+                timeOutTask.cancel(true);
                 alarmClockOff();
             }
             mLast = value;
@@ -174,6 +183,23 @@ public class AlarmActivity extends AppCompatActivity {
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+        }
+    }
+
+    /**
+     * 超时异步任务
+     */
+    private class TimeOutTask extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            try {
+                Thread.sleep(params[0]);
+                alarmClockOff();
+            } catch (InterruptedException e) {
+                //cancel task
+            }
+            return null;
         }
     }
 }
