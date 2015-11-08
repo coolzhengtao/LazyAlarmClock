@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.entities.AlarmClock;
+import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -95,6 +96,8 @@ public class AlarmAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 alarmClock.setIsEnabled(isChecked);
+                notifyDataSetChanged();
+                AlarmScheme.getInstance().setNextAlarm();
             }
         });
         return convertView;

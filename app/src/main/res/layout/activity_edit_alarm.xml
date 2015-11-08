@@ -8,7 +8,6 @@
 
     <TextView
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="添加闹钟"
@@ -17,7 +16,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/holo_red_light" />
+        android:background="@color/colorSplitLine" />
 
     <TimePicker
         android:id="@+id/timePicker"
@@ -48,11 +47,11 @@
                 android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <TextView
+                    style="@style/styleContentText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="重复"
-                    android:textSize="18sp" />
+                    android:text="重复" />
 
                 <CheckBox
                     android:id="@+id/check_sun"
@@ -103,6 +102,7 @@
                 android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <TextView
+                    style="@style/styleContentText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -128,6 +128,7 @@
                 android:paddingRight="@dimen/activity_horizontal_margin">
 
                 <TextView
+                    style="@style/styleContentText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -149,11 +150,10 @@
 
     <Button
         android:id="@+id/btn_save"
+        style="@style/styleNormalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/shape_normal_button"
-        android:text="保存"
-        android:textSize="18sp" />
+        android:text="@string/editalarm_btn_save" />
 
 </LinearLayout>

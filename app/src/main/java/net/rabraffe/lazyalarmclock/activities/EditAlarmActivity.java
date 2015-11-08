@@ -3,6 +3,7 @@ package net.rabraffe.lazyalarmclock.activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -122,7 +123,7 @@ public class EditAlarmActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onCloseAllActivity(CloseAllActivityEvent event){
+    public void onCloseAllActivity(CloseAllActivityEvent event) {
         //关闭所有窗体
         this.finish();
     }

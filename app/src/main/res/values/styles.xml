@@ -10,5 +10,17 @@
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_height">30dp</item>
         <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textColor">@drawable/selector_color_check_repeat</item>
+    </style>
+
+    <style name="styleContentText">
+        <item name="android:textColor">@color/colorTextColor</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="styleNormalButton">
+        <item name="android:background">@drawable/selector_normal_button</item>
+        <item name="android:textColor">@drawable/selector_color_normal_button</item>
+        <item name="android:textSize">18sp</item>
     </style>
 </resources>
