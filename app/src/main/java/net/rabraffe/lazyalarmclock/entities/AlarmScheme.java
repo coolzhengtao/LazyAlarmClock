@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import net.rabraffe.lazyalarmclock.Application.AlarmApplication;
+import net.rabraffe.lazyalarmclock.application.AlarmApplication;
 import net.rabraffe.lazyalarmclock.activities.AlarmActivity;
 import net.rabraffe.lazyalarmclock.utils.FileUtil;
 import net.rabraffe.lazyalarmclock.utils.StaticValues;
@@ -38,6 +38,22 @@ public class AlarmScheme {
     }
 
     /**
+     * 根据UUID获取闹钟
+     *
+     * @param strUUID
+     * @return
+     */
+    public AlarmClock getAlarmByUUID(String strUUID) {
+        for (AlarmClock clock :
+                this.listAlarm) {
+            if (clock.getUUID().equals(strUUID)) {
+                return clock;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 保存闹钟到磁盘
      */
     public void SaveAlarms() {
@@ -63,6 +79,8 @@ public class AlarmScheme {
                 listAlarm) {
             if (scheme.getUUID().equals(strUUID)) {
                 scheme.setIsEnabled(false);
+                SaveAlarms();
+                break;
             }
         }
     }
@@ -98,9 +116,11 @@ public class AlarmScheme {
         if (scheme == null) return;
         Intent intent = new Intent(AlarmApplication.appContext, AlarmActivity.class);
         intent.putExtra("uuid", scheme.getUUID());
-        intent.putExtra("once", scheme.getType() == AlarmClock.TYPE_ONCE);
-        pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, Intent.FILL_IN_ACTION);
+        intent.putExtra("once", scheme.getType() == AlarmClock.TYPE_ONCE ? "1" : "0");
+        intent.putExtra("isVibrate", scheme.isVibrateOn() ? "1" : "0");
+        pendingIntent = PendingIntent.getActivity(AlarmApplication.appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(pendingIntent);
         //判断系统版本
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             am.setExact(android.app.AlarmManager.RTC_WAKEUP, scheme.getAlarmTime().getTime(), pendingIntent);
@@ -109,6 +129,11 @@ public class AlarmScheme {
         }
     }
 
+    /**
+     * 删除一个闹钟
+     *
+     * @param position
+     */
     public void deleteAlarm(int position) {
         listAlarm.remove(position);
         android.app.AlarmManager am = (android.app.AlarmManager) AlarmApplication.appContext.getSystemService(Context.ALARM_SERVICE);

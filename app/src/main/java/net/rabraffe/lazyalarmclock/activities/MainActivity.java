@@ -65,6 +65,15 @@ public class MainActivity extends BaseActivity {
                 menu.add(0, 1, 0, "删除");
             }
         });
+        lv_alarms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //弹出修改闹钟界面
+                Intent intent = new Intent(context, EditAlarmActivity.class);
+                intent.putExtra("uuid", AlarmScheme.getInstance().listAlarm.get(position).getUUID());
+                startActivity(intent);
+            }
+        });
     }
 
     @OnClick(R.id.btn_add)

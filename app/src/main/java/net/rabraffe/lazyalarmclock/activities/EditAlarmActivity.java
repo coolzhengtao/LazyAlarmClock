@@ -1,5 +1,6 @@
 package net.rabraffe.lazyalarmclock.activities;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -21,6 +22,7 @@ import net.rabraffe.lazyalarmclock.utils.EventBus;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,6 +52,8 @@ public class EditAlarmActivity extends BaseActivity {
     CheckBox check_fri;
     @Bind(R.id.check_sat)
     CheckBox check_sat;
+    @Bind(R.id.tv_title)
+    TextView tv_title;
 
     AlarmClock alarm;
 
@@ -65,6 +69,28 @@ public class EditAlarmActivity extends BaseActivity {
         EventBus.getInstance().register(this);
         timePicker.setIs24HourView(true);
         switch_vibrate.setChecked(true);
+        initValues();
+    }
+
+    private void initValues() {
+        String strUUID = getIntent().getStringExtra("uuid");
+        if (strUUID != null && !strUUID.equals("")) {
+            tv_title.setText("编辑闹钟");
+            alarm = AlarmScheme.getInstance().getAlarmByUUID(strUUID);
+            if (Build.VERSION.SDK_INT > 23) {
+                timePicker.setHour(alarm.getAlarmTime().getHours());
+                timePicker.setMinute(alarm.getAlarmTime().getMinutes());
+            }
+            tv_name.setText(alarm.getName());
+            switch_vibrate.setChecked(alarm.isVibrateOn());
+            check_sun.setChecked(alarm.getWeekAlarm()[0]);
+            check_mon.setChecked(alarm.getWeekAlarm()[1]);
+            check_tue.setChecked(alarm.getWeekAlarm()[2]);
+            check_wed.setChecked(alarm.getWeekAlarm()[3]);
+            check_thu.setChecked(alarm.getWeekAlarm()[4]);
+            check_fri.setChecked(alarm.getWeekAlarm()[5]);
+            check_sat.setChecked(alarm.getWeekAlarm()[6]);
+        }
     }
 
     @OnClick(R.id.btn_save)
@@ -73,6 +99,7 @@ public class EditAlarmActivity extends BaseActivity {
         if (alarm == null) {
             //新增闹钟
             alarm = new AlarmClock();
+            AlarmScheme.getInstance().addAlarm(alarm);
         }
         Date dtAlarm = new Date();
         dtAlarm.setHours(timePicker.getCurrentHour());
@@ -114,8 +141,7 @@ public class EditAlarmActivity extends BaseActivity {
         alarm.getAlarmTime();               //刷新计划时间
         alarm.setIsVibrateOn(switch_vibrate.isChecked());
         alarm.setName(tv_name.getText().toString());
-        AlarmScheme.getInstance().addAlarm(alarm);
-        AlarmScheme.getInstance().setNextAlarm();
+        alarm.setUuid(UUID.randomUUID().toString());
         EventBus.getInstance().post(new AlarmUpdateEvent());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Toast.makeText(this, String.format("闹钟响铃时间：" + format.format(alarm.getAlarmTime())), Toast.LENGTH_LONG).show();

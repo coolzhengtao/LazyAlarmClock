@@ -17,9 +17,11 @@ import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import net.rabraffe.lazyalarmclock.R;
 import net.rabraffe.lazyalarmclock.entities.AlarmScheme;
@@ -56,6 +58,7 @@ public class AlarmActivity extends AppCompatActivity {
     private Date dtEnd;                                 //闹钟结束的时间
 
     private TimeOutTask timeOutTask = new TimeOutTask();        //超时任务
+    private boolean isVibrateOn = true;                 //震动是否打开
 
     @OnClick(R.id.btnStopVibrate)
     public void btnStopVibrateClick(View view) {
@@ -71,13 +74,15 @@ public class AlarmActivity extends AppCompatActivity {
             dtEnd = new Date();
             long lTimeDiff = dtEnd.getTime() - dtStart.getTime();
             float dSeconds = lTimeDiff / 1000.0f;
-            vibrator.cancel();
+            if (isVibrateOn) {
+                vibrator.cancel();
+            }
             mediaPlayer.stop();
             //关闭传感器
             sensorManager.unregisterListener(listener);
             wakeLock.release();
             //判断是否是单次闹钟
-            if (getIntent().getBooleanExtra("once", false)) {
+            if (getIntent().getStringExtra("once").equals("1")) {
                 //禁用单次闹钟
                 AlarmScheme.getInstance().disableAlarm(getIntent().getStringExtra("uuid"));
                 //刷新界面
@@ -118,7 +123,7 @@ public class AlarmActivity extends AppCompatActivity {
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);         //获取加速度感应器
         listener = new SensorValueListener();
         uriAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);   //获取默认的铃声URI
-        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(this, uriAlarm);
@@ -130,19 +135,20 @@ public class AlarmActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        isVibrateOn = getIntent().getStringExtra("isVibrate").equals("1");
     }
 
     //打开闹钟
     private void alarmClockOn() {
         //启用超时
         timeOutTask.execute(60000);         //超时60秒自动关闭
-        //关闭当前闹钟
-//        Alarms.getInstance().disableAlarm(getIntent().getStringExtra("uuid"));
         //开始计时
         dtStart = new Date();
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        long[] fVibrate = new long[]{1000, 2000};
-        vibrator.vibrate(fVibrate, 0);
+        if (isVibrateOn) {
+            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            long[] fVibrate = new long[]{0, 2000, 1000};
+            vibrator.vibrate(fVibrate, 0);
+        }
         //启动铃声
         mediaPlayer.start();
         //启动感应器
@@ -155,7 +161,7 @@ public class AlarmActivity extends AppCompatActivity {
         Notification notification = new NotificationCompat.Builder(this).setTicker("闹钟响了")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentText("闹钟响了").setContentTitle("懒人闹钟").build();
-        notificationManager.notify(1,notification);
+        notificationManager.notify(1, notification);
     }
 
     //传感器监听类
@@ -195,11 +201,16 @@ public class AlarmActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... params) {
             try {
                 Thread.sleep(params[0]);
-                alarmClockOff();
             } catch (InterruptedException e) {
                 //cancel task
+                Log.e("线程中断", "");
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            alarmClockOff();
         }
     }
 }

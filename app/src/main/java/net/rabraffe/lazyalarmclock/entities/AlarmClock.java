@@ -15,7 +15,6 @@ public class AlarmClock implements Serializable {
     public static final int TYPE_WORKDAY = 0x3;     //工作日
     public static final int TYPE_CUSTOM = 0x4;      //自定义
 
-
     private String uuid;                  //UUID
     private String name = "闹钟";                //闹钟名称
     private int type = TYPE_ONCE;                   //闹钟类型
@@ -25,7 +24,7 @@ public class AlarmClock implements Serializable {
     private Date alarmTime;             //响铃的时间，注意不包含日期
 
     public AlarmClock() {
-        uuid = UUID.randomUUID().toString();
+
     }
 
     public Date getAlarmTime() {
@@ -93,6 +92,10 @@ public class AlarmClock implements Serializable {
         }
         alarmTime = calendar.getTime();
         return alarmTime;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getUUID() {

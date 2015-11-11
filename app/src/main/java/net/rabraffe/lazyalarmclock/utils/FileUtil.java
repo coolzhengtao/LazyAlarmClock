@@ -30,7 +30,11 @@ public class FileUtil {
     public static boolean saveObjectToFile(String path, String filename, Serializable obj) {
         boolean result = false;
         try {
-            ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(path + "/" + filename)));
+            File file = new File(path + "/" + filename);
+            if (file.exists()) {
+                file.delete();
+            }
+            ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(file));
             oo.writeObject(obj);
             result = true;
         } catch (IOException e) {
