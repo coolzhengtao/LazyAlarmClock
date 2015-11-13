@@ -15,13 +15,13 @@ public class AlarmClock implements Serializable {
     public static final int TYPE_WORKDAY = 0x3;     //工作日
     public static final int TYPE_CUSTOM = 0x4;      //自定义
 
-    private String uuid;                  //UUID
-    private String name = "闹钟";                //闹钟名称
+    private String uuid;                            //UUID
+    private String name = "闹钟";                   //闹钟名称
     private int type = TYPE_ONCE;                   //闹钟类型
-    private boolean isVibrateOn;        //是否震动
-    private boolean[] weekAlarm = new boolean[7];           //每周几重响
-    private boolean isEnabled;          //是否启用
-    private Date alarmTime;             //响铃的时间，注意不包含日期
+    private boolean isVibrateOn;                    //是否震动
+    private boolean[] weekAlarm = new boolean[7];   //每周几重响
+    private boolean isEnabled;                      //是否启用
+    private Date alarmTime;                         //响铃的时间，注意不包含日期
 
     public AlarmClock() {
 
@@ -30,65 +30,35 @@ public class AlarmClock implements Serializable {
     public Date getAlarmTime() {
         //重写获取alarmTime根据下次要响铃的时间获取
         Calendar calendar = Calendar.getInstance();
+        Calendar calendarNow = Calendar.getInstance();
         calendar.setTime(alarmTime);
         Date dtNow = new Date();            //现在的时间
-        switch (type) {
-            case TYPE_ONCE:
-                break;
-            case TYPE_EVERYDAY:
-                //每天响铃
-                if (dtNow.getTime() >= alarmTime.getTime()) {
-                    calendar.add(Calendar.DATE, 1); //加一天
-                }
-                break;
-            case TYPE_WORKDAY:
-                //工作日响铃
-                if (dtNow.getTime() >= alarmTime.getTime()) {
-                    Calendar calendar1Now = Calendar.getInstance();
-                    calendar1Now.setTime(dtNow);
-                    switch (calendar1Now.get(Calendar.DAY_OF_WEEK)) {
-                        case Calendar.MONDAY:
-                        case Calendar.TUESDAY:
-                        case Calendar.WEDNESDAY:
-                        case Calendar.THURSDAY:
-                            calendar.add(Calendar.DATE, 1); //加一天
-                            break;
-                        case Calendar.FRIDAY:
-                            calendar.add(Calendar.DATE, 3); //加三天
-                            break;
-                        case Calendar.SATURDAY:
-                            calendar.add(Calendar.DATE, 2); //加两天
-                            break;
-                        case Calendar.SUNDAY:
-                            calendar.add(Calendar.DATE, 1); //加一天
-                            break;
+        calendarNow.setTime(dtNow);
+        if (type == TYPE_ONCE && dtNow.getTime() >= alarmTime.getTime()) {
+            //单次响铃
+            calendar.add(Calendar.DATE, 1); //加一天
+        } else if (type != TYPE_ONCE) {
+            if ((!weekAlarm[calendarNow.get(Calendar.DAY_OF_WEEK) - 1]) ||
+                    (weekAlarm[calendarNow.get(Calendar.DAY_OF_WEEK) - 1] && dtNow.getTime() >= alarmTime.getTime())) {
+                //今天不响铃
+                int dayOfWeek = calendarNow.get(Calendar.DAY_OF_WEEK) - 1;     //确定今天星期几
+                boolean isAddDay = false;
+                for (int i = dayOfWeek + 1; i < 7; i++) {
+                    if (weekAlarm[i]) {
+                        calendar.add(Calendar.DATE, i - dayOfWeek);
+                        isAddDay = true;            //已经加过
+                        break;
                     }
                 }
-                break;
-            case TYPE_CUSTOM:
-                //自定义响铃
-                if (dtNow.getTime() >= alarmTime.getTime()) {
-                    Calendar calendar1Now = Calendar.getInstance();
-                    calendar1Now.setTime(dtNow);
-                    int dayOfWeek = calendar1Now.get(Calendar.DAY_OF_WEEK) - 1;     //确定今天星期几
-                    boolean isAddDay = false;
-                    for (int i = dayOfWeek + 1; i < 7; i++) {
+                if (!isAddDay) {
+                    for (int i = 0; i <= dayOfWeek; i++) {
                         if (weekAlarm[i]) {
-                            calendar.add(Calendar.DATE, i - dayOfWeek);
-                            isAddDay = true;            //已经加过
+                            calendar.add(Calendar.DATE, i + 7 - dayOfWeek);
                             break;
                         }
                     }
-                    if (!isAddDay) {
-                        for (int i = 0; i <= dayOfWeek; i++) {
-                            if (weekAlarm[i]) {
-                                calendar.add(Calendar.DATE, i + 7 - dayOfWeek);
-                                break;
-                            }
-                        }
-                    }
                 }
-                break;
+            }
         }
         alarmTime = calendar.getTime();
         return alarmTime;
@@ -144,5 +114,22 @@ public class AlarmClock implements Serializable {
 
     public void setWeekAlarm(boolean[] weekAlarm) {
         this.weekAlarm = weekAlarm;
+        //判断响铃模式
+        if (weekAlarm[0] && weekAlarm[1] && weekAlarm[2] && weekAlarm[3] && weekAlarm[4] &&
+                weekAlarm[5] && weekAlarm[6]) {
+            //每天响铃
+            this.setType(AlarmClock.TYPE_EVERYDAY);
+        } else if (weekAlarm[1] && weekAlarm[2] && weekAlarm[3] && weekAlarm[4] &&
+                weekAlarm[5]) {
+            //工作日响铃
+            this.setType(AlarmClock.TYPE_WORKDAY);
+        } else if (!weekAlarm[0] && !weekAlarm[1] && !weekAlarm[2] && !weekAlarm[3] && !weekAlarm[4] &&
+                !weekAlarm[5] && !weekAlarm[6]) {
+            //单次响铃
+            this.setType(AlarmClock.TYPE_ONCE);
+        } else {
+            //自定义响铃
+            this.setType(AlarmClock.TYPE_CUSTOM);
+        }
     }
 }

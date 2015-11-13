@@ -29,17 +29,29 @@ public class FileUtil {
      */
     public static boolean saveObjectToFile(String path, String filename, Serializable obj) {
         boolean result = false;
+        File file = null;
+        ObjectOutputStream oo = null;
         try {
-            File file = new File(path + "/" + filename);
+            file = new File(path + "/" + filename);
             if (file.exists()) {
                 file.delete();
             }
-            ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(file));
+            oo = new ObjectOutputStream(new FileOutputStream(file));
             oo.writeObject(obj);
             result = true;
+            oo.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (oo != null) {
+                try {
+                    oo.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
         return result;
     }
 

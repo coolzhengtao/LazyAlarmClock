@@ -105,46 +105,25 @@ public class EditAlarmActivity extends BaseActivity {
         dtAlarm.setHours(timePicker.getCurrentHour());
         dtAlarm.setMinutes(timePicker.getCurrentMinute());
         dtAlarm.setSeconds(0);
-        //判断响铃模式
-        if (check_mon.isChecked() && check_tue.isChecked() &&
-                check_wed.isChecked() && check_thu.isChecked() &&
-                check_fri.isChecked() && check_sat.isChecked() && check_sun.isChecked()) {
-            alarm.setType(AlarmClock.TYPE_EVERYDAY);
-        } else if (check_mon.isChecked() && check_tue.isChecked() && check_wed.isChecked() && check_thu.isChecked() && check_fri.isChecked()) {
-            alarm.setType(AlarmClock.TYPE_WORKDAY);
-        } else if (!check_mon.isChecked() && !check_tue.isChecked() &&
-                !check_wed.isChecked() && !check_thu.isChecked() &&
-                !check_fri.isChecked() && !check_sat.isChecked() && !check_sun.isChecked()) {
-            if (dtAlarm.before(new Date())) {
-                //设置为新的一天
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(dtAlarm);
-                calendar.add(Calendar.DATE, 1);
-                dtAlarm = calendar.getTime();
-            }
-            alarm.setType(AlarmClock.TYPE_ONCE);
-        } else {
-            alarm.setType(AlarmClock.TYPE_CUSTOM);
-            boolean[] bAlarmDays = new boolean[]{
-                    check_sun.isChecked(),
-                    check_mon.isChecked(),
-                    check_tue.isChecked(),
-                    check_wed.isChecked(),
-                    check_thu.isChecked(),
-                    check_fri.isChecked(),
-                    check_sat.isChecked()
-            };
-            alarm.setWeekAlarm(bAlarmDays);
-        }
+        boolean[] bAlarmDays = new boolean[]{
+                check_sun.isChecked(),
+                check_mon.isChecked(),
+                check_tue.isChecked(),
+                check_wed.isChecked(),
+                check_thu.isChecked(),
+                check_fri.isChecked(),
+                check_sat.isChecked()
+        };
+        alarm.setWeekAlarm(bAlarmDays);
         alarm.setIsEnabled(true);
         alarm.setAlarmTime(dtAlarm);
-        alarm.getAlarmTime();               //刷新计划时间
         alarm.setIsVibrateOn(switch_vibrate.isChecked());
         alarm.setName(tv_name.getText().toString());
         alarm.setUuid(UUID.randomUUID().toString());
         EventBus.getInstance().post(new AlarmUpdateEvent());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Toast.makeText(this, String.format("闹钟响铃时间：" + format.format(alarm.getAlarmTime())), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, String.format("闹钟响铃时间：" + format.format(alarm.getAlarmTime())),
+                Toast.LENGTH_LONG).show();
         this.finish();
     }
 
