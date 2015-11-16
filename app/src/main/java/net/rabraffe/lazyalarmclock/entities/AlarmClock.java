@@ -19,7 +19,7 @@ public class AlarmClock implements Serializable {
     private String name = "闹钟";                   //闹钟名称
     private int type = TYPE_ONCE;                   //闹钟类型
     private boolean isVibrateOn;                    //是否震动
-    private boolean[] weekAlarm = new boolean[7];   //每周几重响
+    private boolean[] weekAlarm = new boolean[7];   //每周几重响,从周日开始
     private boolean isEnabled;                      //是否启用
     private Date alarmTime;                         //响铃的时间，注意不包含日期
 
@@ -34,14 +34,14 @@ public class AlarmClock implements Serializable {
         calendar.setTime(alarmTime);
         Date dtNow = new Date();            //现在的时间
         calendarNow.setTime(dtNow);
+        int dayOfWeek = convertDayOfWeek(calendarNow.get(Calendar.DAY_OF_WEEK));     //确定今天星期几
         if (type == TYPE_ONCE && dtNow.getTime() >= alarmTime.getTime()) {
             //单次响铃
             calendar.add(Calendar.DATE, 1); //加一天
         } else if (type != TYPE_ONCE) {
-            if ((!weekAlarm[calendarNow.get(Calendar.DAY_OF_WEEK) - 1]) ||
-                    (weekAlarm[calendarNow.get(Calendar.DAY_OF_WEEK) - 1] && dtNow.getTime() >= alarmTime.getTime())) {
+            if ((!weekAlarm[dayOfWeek]) ||
+                    (weekAlarm[dayOfWeek] && dtNow.getTime() >= alarmTime.getTime())) {
                 //今天不响铃
-                int dayOfWeek = calendarNow.get(Calendar.DAY_OF_WEEK) - 1;     //确定今天星期几
                 boolean isAddDay = false;
                 for (int i = dayOfWeek + 1; i < 7; i++) {
                     if (weekAlarm[i]) {
@@ -131,5 +131,31 @@ public class AlarmClock implements Serializable {
             //自定义响铃
             this.setType(AlarmClock.TYPE_CUSTOM);
         }
+    }
+
+    /**
+     * 转换系统的DayOffWeek
+     *
+     * @param l_int_dayOfWeek
+     * @return
+     */
+    private int convertDayOfWeek(int l_int_dayOfWeek) {
+        switch (l_int_dayOfWeek) {
+            case Calendar.SUNDAY:
+                return 0;
+            case Calendar.MONDAY:
+                return 1;
+            case Calendar.TUESDAY:
+                return 2;
+            case Calendar.WEDNESDAY:
+                return 3;
+            case Calendar.THURSDAY:
+                return 4;
+            case Calendar.FRIDAY:
+                return 5;
+            case Calendar.SATURDAY:
+                return 6;
+        }
+        return -1;
     }
 }
